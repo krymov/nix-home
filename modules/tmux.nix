@@ -119,7 +119,12 @@ in {
         # Status bar
         set -g status-position top
         set -g status-left ""
-        set -g status-right "#{E:@catppuccin_status_session} #{E:@catppuccin_status_host} #{E:@catppuccin_status_date_time}"
+        set -g status-right-length 80
+        set -g status-right "#{E:@catppuccin_status_session} #{E:@catppuccin_status_date_time}"
+
+        # Timewarrior integration — auto-track time per tmux session
+        set-hook -g client-session-changed 'run-shell -b "command -v timew >/dev/null && timew start tmux:#{session_name} 2>/dev/null || true"'
+        set-hook -g client-detached 'run-shell -b "command -v timew >/dev/null && timew stop 2>/dev/null || true"'
       '';
     };
   };
