@@ -1,7 +1,7 @@
 # Completion styling — no tool-specific sourcing (handled by nix fpath + cached generators)
 
 # Source Typer/Click completions (they register via compdef, need explicit sourcing)
-for f in ~/.zsh/completions/_*; do
+for f in ~/.zsh/completions/_*(N); do
   [[ -f "$f" ]] && grep -q 'compdef.*_completion' "$f" && source "$f"
 done
 
