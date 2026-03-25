@@ -3,7 +3,7 @@
 
 with pkgs; [
   # Task & time management
-  taskwarrior2
+  taskwarrior3
   timewarrior
   gcalcli
 
