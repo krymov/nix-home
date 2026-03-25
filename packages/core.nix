@@ -44,7 +44,6 @@ with pkgs; [
 
   # Security / crypto
   age
-  agenix
   gnupg
   yubikey-manager
   openssl
