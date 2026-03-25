@@ -118,7 +118,8 @@ in {
 
         # Status bar
         set -g status-position top
-        set -g status-left ""
+        set -g status-left-length 40
+        set -g status-left "#[fg=yellow]#{?#{==:#(command -v timew),},, #(timew | head -1 | sed 's/Tracking //' | cut -c1-20') #[fg=cyan]#(timew | grep Total | awk '{print $2}')}"
         set -g status-right-length 80
         set -g status-right "#{E:@catppuccin_status_date_time} #{E:@catppuccin_status_host} #{E:@catppuccin_status_session}"
 
