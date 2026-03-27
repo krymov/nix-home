@@ -7,7 +7,7 @@ with pkgs; [
   kubectx
   stern
   kubernetes-helm
-  cdk8s
+  cdk8s-cli
 
   # Cloud providers
   awscli2
