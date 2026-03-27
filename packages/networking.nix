@@ -15,6 +15,7 @@ with pkgs; [
   trippy            # traceroute TUI
   swaks             # SMTP testing
   websocat          # WebSocket CLI
+  curlie            # better curl (httpie-like with curl backend)
   grpcurl           # gRPC CLI client
   miniserve         # serve files over HTTP
 ]

@@ -58,6 +58,10 @@ with pkgs; [
   claude-code       # Claude in your terminal
   hyperfine         # benchmark CLI commands
 
+  # Platform CLIs
+  temporal-cli      # Temporal workflow management
+  svix-cli          # Svix webhooks CLI
+
   # .NET (if needed)
   dotnet-sdk_8
 
