@@ -26,6 +26,7 @@
             inherit system;
             config.allowUnfree = true;
             config.problems.handlers.nss_wrapper.broken = "warn";
+            config.problems.handlers.pg_top.unsupported = "warn";
           };
         }
       );

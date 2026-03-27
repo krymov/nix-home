@@ -24,7 +24,7 @@ in {
 
     programs.zsh = {
       enable = true;
-      dotDir = "${config.home.homeDirectory}";
+      dotDir = config.home.homeDirectory;
       enableCompletion = true;
       autocd = true;
 
