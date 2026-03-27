@@ -27,7 +27,6 @@ with pkgs; [
 
   # Database clients
   pgcli             # PostgreSQL CLI with autocompletion
-  pg_top            # PostgreSQL monitoring
   mongosh           # MongoDB shell
   # usql            # universal SQL client — broken in nixpkgs-unstable (cockroachdb/swiss Go dep)
 
@@ -45,4 +44,7 @@ with pkgs; [
 
   # HTML testing
   htmltest          # link checker for HTML output
+]
+++ pkgs.lib.optionals pkgs.stdenv.isLinux [
+  pg_top            # PostgreSQL monitoring (Linux-only)
 ]
