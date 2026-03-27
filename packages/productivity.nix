@@ -20,9 +20,6 @@ with pkgs; [
   typst
   glow               # markdown previewer
 
-  # Communication
-  aerc               # email client
-
   # Cooking
   cook-cli
 

@@ -58,9 +58,6 @@ with pkgs; [
   # Nix
   nix-search-cli
 
-  # Email
-  aerc
-
   # Fonts
   nerd-fonts.jetbrains-mono
   nerd-fonts.fira-code
