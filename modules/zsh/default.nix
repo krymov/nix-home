@@ -3,6 +3,7 @@
 let
   cfg = config.nix-home.zsh;
   configDir = ./.;
+  completionCmds = import ../../packages/completions.nix;
 in {
   options.nix-home.zsh = {
     enable = lib.mkEnableOption "zsh configuration";
@@ -149,7 +150,7 @@ in {
           # Tier 2: Cached runtime completions (auto-regenerate when binary updates)
           _cache_dir="''${XDG_CACHE_HOME:-$HOME/.cache}/zsh-completions"
           mkdir -p "$_cache_dir"
-          for cmd in kubectl helm stern argocd cilium hubble k9s kustomize talosctl omnictl temporal svix trivy; do
+          for cmd in ${lib.concatStringsSep " " completionCmds}; do
             _cache="$_cache_dir/_$cmd"
             _bin="$(command -v $cmd 2>/dev/null)"
             if [[ -n "$_bin" ]] && [[ ! -f "$_cache" || "$_bin" -nt "$_cache" ]]; then
