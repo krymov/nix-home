@@ -29,8 +29,7 @@ with pkgs; [
   pgcli             # PostgreSQL CLI with autocompletion
   postgresql        # psql
   mongosh           # MongoDB shell
-  redis             # redis-cli
-  valkey            # Redis-compatible (valkey-cli)
+  valkey            # redis-cli compatible
   clickhouse        # ClickHouse client
   kcat              # Kafka producer/consumer/metadata
   # usql            # universal SQL client — broken in nixpkgs-unstable (cockroachdb/swiss Go dep)
