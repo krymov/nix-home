@@ -14,4 +14,6 @@
   "talosctl"
   "temporal"
   "trivy"
+  "zitadel"
+  "zitadel-tools"
 ]

@@ -46,4 +46,6 @@ with pkgs; [
 
   # Auth
   keycloak          # includes kcadm.sh CLI
+  zitadel           # identity management
+  zitadel-tools     # helper tools for zitadel
 ]
