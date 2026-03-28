@@ -69,3 +69,6 @@ with pkgs; [
   # Ethereum / blockchain dev
   go-ethereum
 ]
+++ pkgs.lib.optionals pkgs.stdenv.isLinux [
+  gcc               # on macOS, clang provides c++ (gcc conflicts)
+]
