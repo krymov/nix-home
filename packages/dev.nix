@@ -38,7 +38,6 @@ with pkgs; [
   delve
 
   # C/C++
-  gcc
   clang
   libiconv
 
