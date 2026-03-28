@@ -39,6 +39,8 @@ with pkgs; [
 
   # C/C++
   gcc
+  clang
+  libiconv
 
   # Tree-sitter
   tree-sitter
