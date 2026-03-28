@@ -13,6 +13,7 @@
   "svix"
   "talosctl"
   "temporal"
+  "harbor"
   "trivy"
   "zitadel"
   "zitadel-tools"

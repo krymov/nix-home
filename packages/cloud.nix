@@ -40,9 +40,17 @@ with pkgs; [
   age
   gnupg
 
-  # Containers
+  # Containers / registries
   dive              # Docker image layer inspection
   trivy             # container vulnerability scanning
+  harbor-cli        # Harbor container registry CLI
+
+  # Storage
+  minio-client      # S3-compatible object storage CLI (mc)
+
+  # Caches / registries
+  attic-client      # Nix binary cache client
+  devpi-client      # PyPI index client
 
   # Auth
   keycloak          # includes kcadm.sh CLI
