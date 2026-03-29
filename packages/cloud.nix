@@ -54,7 +54,7 @@ with pkgs; [
 
   # Auth
   keycloak          # includes kcadm.sh CLI
-  kanidm_1_8        # identity management CLI (ships zsh completions)
+  kanidm_1_9        # identity management CLI (ships zsh completions)
   zitadel           # identity management
   zitadel-tools     # helper tools for zitadel
 ]
