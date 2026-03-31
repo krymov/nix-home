@@ -21,7 +21,6 @@ if ! nix show-config 2>/dev/null | grep -q 'flakes'; then
   info "Enabling flakes in $nix_conf"
   mkdir -p "$(dirname "$nix_conf")"
   if [[ -f "$nix_conf" ]] && grep -q 'experimental-features' "$nix_conf"; then
-    # Append flakes to existing line
     sed -i 's/experimental-features = /experimental-features = flakes nix-command /' "$nix_conf"
   else
     echo 'experimental-features = nix-command flakes' >> "$nix_conf"
@@ -31,10 +30,15 @@ else
   ok "Flakes already enabled"
 fi
 
+# Detect user
+USERNAME="${USER:-$(whoami)}"
+HOME_DIR="$HOME"
+ok "User: $USERNAME ($HOME_DIR)"
+
 # Select profile
 printf '\n'
 info "Available profiles:"
-echo "  1) workspace   — personal identity, full dotfiles, no GPG signing (default)"
+echo "  1) workspace   — full dotfiles, no GPG signing (default)"
 echo "  2) personal    — full environment with GPG signing"
 echo "  3) agent       — minimal tooling, agent identity"
 echo "  4) dev-agent   — full dev environment, agent identity"
@@ -51,9 +55,44 @@ case "${choice:-1}" in
 esac
 ok "Using profile: $PROFILE"
 
-# Run home-manager switch
+# Generate a temporary flake that wraps nix-home with the local user
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT
+
+cat > "$tmpdir/flake.nix" <<FLAKE
+{
+  inputs = {
+    nix-home.url = "${FLAKE_URL}";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
+      inputs.nixpkgs.follows = "nix-home/nixpkgs";
+    };
+  };
+
+  outputs = { nix-home, home-manager, ... }: {
+    homeConfigurations.default = home-manager.lib.homeManagerConfiguration {
+      pkgs = import nix-home.inputs.nixpkgs {
+        system = "x86_64-linux";
+        config.allowUnfree = true;
+      };
+      modules = [
+        nix-home.homeManagerModules.default
+        {
+          nix-home.profiles.${PROFILE}.enable = true;
+          home = {
+            username = "${USERNAME}";
+            homeDirectory = "${HOME_DIR}";
+            stateVersion = "25.11";
+          };
+        }
+      ];
+    };
+  };
+}
+FLAKE
+
 info "Activating home-manager with profile '$PROFILE'..."
-nix run home-manager -- switch -b backup --flake "${FLAKE_URL}#${PROFILE}"
+nix run home-manager -- switch -b backup --flake "$tmpdir#default"
 ok "Home Manager activated"
 
 # Switch shell to zsh if not already
