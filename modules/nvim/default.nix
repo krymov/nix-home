@@ -20,8 +20,9 @@ in {
       vimAlias = true;
       vimdiffAlias = true;
       extraPackages = lib.optionals (!cfg.minimal) [
-        pkgs.gcc      # treesitter parser compilation
-        pkgs.gnumake  # telescope fzf-native build
+        pkgs.gcc          # treesitter parser compilation
+        pkgs.tree-sitter  # treesitter CLI
+        pkgs.gnumake      # telescope fzf-native build
       ];
     };
 
