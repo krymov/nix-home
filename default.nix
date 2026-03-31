@@ -11,5 +11,6 @@
     ./modules/profiles/agent.nix
     ./modules/profiles/dev-agent.nix
     ./modules/profiles/server.nix
+    ./modules/profiles/workspace.nix
   ];
 }

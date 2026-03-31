@@ -2,7 +2,7 @@
 
 let
   p = config.nix-home.profiles;
-  enabledCount = lib.count (x: x) [ p.personal.enable p.agent.enable p.dev-agent.enable p.server.enable ];
+  enabledCount = lib.count (x: x) [ p.personal.enable p.agent.enable p.dev-agent.enable p.server.enable p.workspace.enable ];
 in {
   options.nix-home.profiles.server = {
     enable = lib.mkEnableOption "server profile (headless servers, minimal tooling)";
