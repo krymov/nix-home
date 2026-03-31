@@ -54,6 +54,7 @@ tk() {
 }
 
 # Clean merged git branches
+unalias gclean 2>/dev/null
 gclean() {
   git branch --merged | grep -v "\*\|main\|master\|develop" | xargs -n 1 git branch -d
 }
