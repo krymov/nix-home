@@ -16,7 +16,7 @@ in {
 
     nix-home.git = lib.mkDefault { enable = true; identity = "personal"; signing = false; };
     nix-home.zsh = lib.mkDefault { enable = true; };
-    nix-home.tmux = lib.mkDefault { enable = true; };
+    nix-home.tmux = lib.mkDefault { enable = true; catppuccinFlavor = "latte"; };
     nix-home.nvim = lib.mkDefault { enable = true; minimal = true; };
     nix-home.ssh = lib.mkDefault { enable = true; };  # servers need to reach other infra
     nix-home.starship = lib.mkDefault { enable = true; };

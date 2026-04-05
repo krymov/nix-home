@@ -4,6 +4,11 @@ let cfg = config.nix-home.tmux;
 in {
   options.nix-home.tmux = {
     enable = lib.mkEnableOption "tmux configuration";
+    catppuccinFlavor = lib.mkOption {
+      type = lib.types.enum [ "mocha" "macchiato" "frappe" "latte" ];
+      default = "mocha";
+      description = "Catppuccin flavor for tmux theme. Use different flavors per profile to visually distinguish environments.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -37,7 +42,7 @@ in {
         {
           plugin = catppuccin;
           extraConfig = ''
-            set -g @catppuccin_flavor "mocha"
+            set -g @catppuccin_flavor "${cfg.catppuccinFlavor}"
             set -g @catppuccin_status_background "none"
             set -g @catppuccin_window_status_style "rounded"
             set -g @catppuccin_window_default_text " #W"
