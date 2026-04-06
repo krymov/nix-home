@@ -3,6 +3,7 @@
     ./modules/git.nix
     ./modules/zsh
     ./modules/tmux.nix
+    ./modules/tmux-idle.nix
     ./modules/nvim
     ./modules/ssh.nix
     ./modules/starship.nix
