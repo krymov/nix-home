@@ -20,9 +20,9 @@ with pkgs; [
   # Node.js
   nodejs_22
   pnpm
-  nodePackages.typescript
-  nodePackages.eslint
-  nodePackages.prettier
+  typescript
+  eslint
+  prettier
 
   # Rust
   rustup

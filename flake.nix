@@ -21,6 +21,7 @@
             inherit system;
             config.allowUnfree = true;
             config.problems.handlers.pg_top.unsupported = "warn";
+            overlays = [ self.overlays.unstable ];
           };
           modules = [
             ./default.nix
