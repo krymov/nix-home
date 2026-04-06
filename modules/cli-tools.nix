@@ -14,7 +14,7 @@ in {
   config = lib.mkIf cfg.enable {
     programs.direnv = lib.mkIf cfg.direnv {
       enable = true;
-      package = pkgs.unstable.direnv;
+      package = (pkgs.unstable or {}).direnv or pkgs.direnv;
       enableZshIntegration = true;
       nix-direnv.enable = true;
     };

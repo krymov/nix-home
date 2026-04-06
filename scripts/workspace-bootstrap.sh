@@ -74,6 +74,7 @@ cat > "$tmpdir/flake.nix" <<FLAKE
       pkgs = import nix-home.inputs.nixpkgs {
         system = "x86_64-linux";
         config.allowUnfree = true;
+        overlays = [ nix-home.overlays.unstable ];
       };
       modules = [
         nix-home.homeManagerModules.default
