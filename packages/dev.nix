@@ -56,7 +56,7 @@ with pkgs; [
   grex              # generate regex from examples
   gitleaks          # git secrets scanner
   infisical         # secrets management
-  claude-code       # Claude in your terminal
+
   hyperfine         # benchmark CLI commands
 
   # Platform CLIs
