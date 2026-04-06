@@ -127,6 +127,9 @@ in {
         set -g status-right-length 80
         set -g status-right "#{E:@catppuccin_status_date_time} #{E:@catppuccin_status_host} #{E:@catppuccin_status_session}"
 
+        # Lazygit popup
+        bind g display-popup -E -w 90% -h 90% -d "#{pane_current_path}" "${pkgs.lazygit}/bin/lazygit"
+
         # Sessionizer — Ctrl-F to fuzzy-find a project and open as tmux session
         bind C-f display-popup -E -w 80% -h 60% "\
           dir=$(${pkgs.fd}/bin/fd --type d --max-depth 1 . ~/workspace 2>/dev/null | ${pkgs.fzf}/bin/fzf --reverse --header 'Pick a project') && \
