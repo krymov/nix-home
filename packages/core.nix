@@ -32,7 +32,6 @@ with pkgs; [
   wget
   htop
   just
-  direnv
   stow
   wakeonlan
   unixtools.watch
