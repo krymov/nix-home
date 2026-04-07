@@ -30,6 +30,18 @@ else
   ok "Flakes already enabled"
 fi
 
+# Configure Attic binary cache
+if ! grep -q 'attic.c1.aipe.dev' "$nix_conf" 2>/dev/null; then
+  info "Adding Attic binary cache to $nix_conf"
+  cat >> "$nix_conf" <<'CACHE'
+extra-substituters = https://attic.c1.aipe.dev/aipe https://attic.c1.aipe.dev/mk
+extra-trusted-public-keys = aipe:DrxqT6EJcO6J5+UPprEL+uN7wB7wQvxGMQ/hqCAIn7M= mk:iL0ONXTeRvlkgR8KSx65SkMFognIoV9+yoUwLRXHLMo=
+CACHE
+  ok "Attic binary cache configured"
+else
+  ok "Attic binary cache already configured"
+fi
+
 # Detect user
 USERNAME="${USER:-$(whoami)}"
 HOME_DIR="$HOME"
