@@ -4,7 +4,6 @@
 with pkgs; [
   # Editors (neovim managed via programs.neovim in home.nix)
   vim
-  vscode
 
   # Nix tooling
   cachix
