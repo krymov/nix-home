@@ -1,0 +1,56 @@
+name: Build and push to Attic
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [workspace, agent, dev-agent, server]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@main
+
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Build ${{ matrix.profile }}
+        run: nix build .#homeConfigurations.${{ matrix.profile }}.activationPackage --print-out-paths
+
+      - name: Push to Attic
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          ATTIC_TOKEN: ${{ secrets.ATTIC_TOKEN }}
+        run: |
+          nix profile install nixpkgs#attic-client
+          attic login aipe https://attic.c1.aipe.dev "$ATTIC_TOKEN"
+          result=$(nix build .#homeConfigurations.${{ matrix.profile }}.activationPackage --print-out-paths)
+          attic push aipe "$result"
+
+  build-darwin:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@main
+
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Build personal
+        run: nix build .#homeConfigurations.personal.activationPackage --print-out-paths
+
+      - name: Push to Attic
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          ATTIC_TOKEN: ${{ secrets.ATTIC_TOKEN }}
+        run: |
+          nix profile install nixpkgs#attic-client
+          attic login aipe https://attic.c1.aipe.dev "$ATTIC_TOKEN"
+          result=$(nix build .#homeConfigurations.personal.activationPackage --print-out-paths)
+          attic push aipe "$result"
