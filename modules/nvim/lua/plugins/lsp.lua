@@ -1,64 +1,55 @@
 return {
   {
-    "williamboman/mason.nvim",
-    cmd = "Mason",
-    opts = {},
-  },
-
-  {
-    "williamboman/mason-lspconfig.nvim",
+    "neovim/nvim-lspconfig",
     event = "BufReadPre",
     dependencies = {
-      "williamboman/mason.nvim",
-      "neovim/nvim-lspconfig",
       "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
+      local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-      require("mason-lspconfig").setup({
-        ensure_installed = {
-          "lua_ls", "pyright", "ts_ls", "gopls", "rust_analyzer",
-          "nil_ls", "jsonls", "yamlls", "bashls", "marksman",
+      -- Servers with default config
+      local servers = {
+        "gopls", "rust_analyzer", "nil_ls",
+        "jsonls", "yamlls", "bashls", "marksman",
+      }
+      for _, server in ipairs(servers) do
+        lspconfig[server].setup({ capabilities = capabilities })
+      end
+
+      -- TypeScript
+      lspconfig.ts_ls.setup({ capabilities = capabilities })
+
+      -- Lua
+      lspconfig.lua_ls.setup({
+        capabilities = capabilities,
+        settings = {
+          Lua = {
+            runtime = { version = "LuaJIT" },
+            workspace = {
+              library = vim.api.nvim_get_runtime_file("", true),
+              checkThirdParty = false,
+            },
+            diagnostics = { globals = { "vim" } },
+          },
         },
-        handlers = {
-          function(server_name)
-            require("lspconfig")[server_name].setup({
-              capabilities = capabilities,
-            })
-          end,
-          ["lua_ls"] = function()
-            require("lspconfig").lua_ls.setup({
-              capabilities = capabilities,
-              settings = {
-                Lua = {
-                  runtime = { version = "LuaJIT" },
-                  workspace = {
-                    library = vim.api.nvim_get_runtime_file("", true),
-                    checkThirdParty = false,
-                  },
-                  diagnostics = { globals = { "vim" } },
-                },
-              },
-            })
-          end,
-          ["pyright"] = function()
-            require("lspconfig").pyright.setup({
-              capabilities = capabilities,
-              before_init = function(_, config)
-                local p = vim.fn.exepath("python3")
-                if p ~= "" then
-                  config.settings.python.pythonPath = p
-                end
-              end,
-              settings = {
-                python = {
-                  venvPath = ".",
-                  venv = ".venv",
-                },
-              },
-            })
-          end,
+      })
+
+      -- Python
+      lspconfig.pyright.setup({
+        capabilities = capabilities,
+        before_init = function(_, config)
+          local p = vim.fn.exepath("python3")
+          if p ~= "" then
+            config.settings.python.pythonPath = p
+          end
+        end,
+        settings = {
+          python = {
+            venvPath = ".",
+            venv = ".venv",
+          },
         },
       })
     end,

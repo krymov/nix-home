@@ -20,9 +20,26 @@ in {
       vimAlias = true;
       vimdiffAlias = true;
       extraPackages = lib.optionals (!cfg.minimal) [
-        pkgs.gcc          # treesitter parser compilation
-        pkgs.tree-sitter  # treesitter CLI
-        pkgs.gnumake      # telescope fzf-native build
+        # Treesitter
+        pkgs.gcc
+        pkgs.tree-sitter
+        pkgs.gnumake
+
+        # Telescope dependencies
+        pkgs.ripgrep
+        pkgs.fd
+
+        # LSP servers
+        pkgs.lua-language-server
+        pkgs.pyright
+        pkgs.typescript-language-server
+        pkgs.gopls
+        pkgs.rust-analyzer
+        pkgs.nil
+        pkgs.vscode-langservers-extracted  # jsonls, cssls, html
+        pkgs.yaml-language-server
+        pkgs.bash-language-server
+        pkgs.marksman
       ];
     };
 
