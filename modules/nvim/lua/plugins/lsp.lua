@@ -6,23 +6,17 @@ return {
       "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
-      local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-      -- Servers with default config
-      local servers = {
+      local default_servers = {
         "gopls", "rust_analyzer", "nil_ls",
-        "jsonls", "yamlls", "bashls", "marksman",
+        "jsonls", "yamlls", "bashls", "marksman", "ts_ls",
       }
-      for _, server in ipairs(servers) do
-        lspconfig[server].setup({ capabilities = capabilities })
+      for _, server in ipairs(default_servers) do
+        vim.lsp.config(server, { capabilities = capabilities })
       end
 
-      -- TypeScript
-      lspconfig.ts_ls.setup({ capabilities = capabilities })
-
-      -- Lua
-      lspconfig.lua_ls.setup({
+      vim.lsp.config("lua_ls", {
         capabilities = capabilities,
         settings = {
           Lua = {
@@ -36,8 +30,7 @@ return {
         },
       })
 
-      -- Python
-      lspconfig.pyright.setup({
+      vim.lsp.config("pyright", {
         capabilities = capabilities,
         before_init = function(_, config)
           local p = vim.fn.exepath("python3")
@@ -52,6 +45,9 @@ return {
           },
         },
       })
+
+      vim.lsp.enable(default_servers)
+      vim.lsp.enable({ "lua_ls", "pyright" })
     end,
   },
 
