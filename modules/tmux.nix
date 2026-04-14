@@ -12,6 +12,32 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    home.file.".gitmux.conf".text = ''
+      tmux:
+        symbols:
+          branch: " "
+          hashprefix: ":"
+          ahead: "↑"
+          behind: "↓"
+          staged: "●"
+          conflict: "✖"
+          modified: "✚"
+          untracked: "…"
+          stashed: "⚑"
+          clean: "✔"
+        styles:
+          clear: "#[fg=#{@thm_fg}]"
+          state: "#[fg=#{@thm_red},bold]"
+          branch: "#[fg=#{@thm_mauve},bold]"
+          remote: "#[fg=#{@thm_teal}]"
+          staged: "#[fg=#{@thm_green},bold]"
+          modified: "#[fg=#{@thm_yellow},bold]"
+          untracked: "#[fg=#{@thm_blue},bold]"
+          clean: "#[fg=#{@thm_green},bold]"
+          stashed: "#[fg=#{@thm_peach},bold]"
+        layout: [branch, " ", divergence, " - ", flags]
+    '';
+
     programs.tmux = {
       enable = true;
       terminal = "tmux-256color";
@@ -39,6 +65,8 @@ in {
             set -g @continuum-restore 'on'
           '';
         }
+        cpu
+        battery
         {
           plugin = catppuccin;
           extraConfig = ''
@@ -124,8 +152,20 @@ in {
         # Status bar
         set -g status-position top
         set -g status-left ""
-        set -g status-right-length 80
-        set -g status-right "#{E:@catppuccin_status_date_time} #{E:@catppuccin_status_host} #{E:@catppuccin_status_session}"
+        set -g status-right-length 200
+        set -g status-left-length 100
+
+        # Right side: gitmux | directory | kube | battery (graceful) | cpu | time | session
+        set -g  status-right ""
+        set -ag status-right "#(${pkgs.gitmux}/bin/gitmux -cfg $HOME/.gitmux.conf '#{pane_current_path}')"
+        set -ag status-right "#{E:@catppuccin_status_directory}"
+        # K8s context: only show if kubectl exists and a context is set
+        set -ag status-right "#(ctx=$(kubectl config current-context 2>/dev/null) && printf ' ⎈ %s' \"$ctx\" || true)"
+        # Battery: graceful fallback — only renders if battery plugin detects a battery
+        set -agF status-right "#{E:@catppuccin_status_battery}"
+        set -agF status-right "#{E:@catppuccin_status_cpu}"
+        set -ag  status-right "#{E:@catppuccin_status_date_time}"
+        set -ag  status-right "#{E:@catppuccin_status_session}"
 
         # Lazygit popup
         bind g display-popup -E -w 90% -h 90% -d "#{pane_current_path}" "${pkgs.lazygit}/bin/lazygit"

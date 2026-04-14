@@ -40,6 +40,9 @@ in {
         pkgs.yaml-language-server
         pkgs.bash-language-server
         pkgs.marksman
+
+        # Linters / formatters
+        pkgs.markdownlint-cli2
       ];
     };
 

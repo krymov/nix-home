@@ -78,6 +78,9 @@ in {
             tmux new-session -A -s main -c "$WORKSPACE"
           fi
 
+          # Reset mouse tracking on new shell (catches broken detach/disconnect)
+          printf '\e[?1000l\e[?1002l\e[?1003l\e[?1006l'
+
           # Platform detection
           case "$OSTYPE" in
             darwin*)
