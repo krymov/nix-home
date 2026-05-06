@@ -84,8 +84,9 @@ in {
       # Faster refresh for responsive color transitions
       set -g status-interval 2
 
+      # Continuum save trigger — must be in status-right or auto-save stops working
       # Batch idle updater — colors injected as env vars
-      set -g status-right "#(${colorEnv} ~/.config/tmux/idle-update.sh)#{E:@catppuccin_status_date_time} #{E:@catppuccin_status_host} #{E:@catppuccin_status_session}"
+      set -g status-right "#(${pkgs.tmuxPlugins.continuum}/share/tmux-plugins/continuum/scripts/continuum_save.sh)#(${colorEnv} ~/.config/tmux/idle-update.sh)#{E:@catppuccin_status_date_time} #{E:@catppuccin_status_host} #{E:@catppuccin_status_session}"
     '';
   };
 }

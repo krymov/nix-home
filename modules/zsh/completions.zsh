@@ -20,6 +20,25 @@ zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
 zstyle ':completion:*:warnings' format '%F{red}-- no matches found --%f'
 zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
 
+# fzf-tab previews
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath 2>/dev/null || ls $realpath'
+zstyle ':fzf-tab:complete:z:*' fzf-preview 'eza -1 --color=always $realpath 2>/dev/null || ls $realpath'
+zstyle ':fzf-tab:complete:ls:*' fzf-preview 'eza -1 --color=always $realpath 2>/dev/null || ls $realpath'
+zstyle ':fzf-tab:complete:eza:*' fzf-preview 'eza -1 --color=always $realpath 2>/dev/null'
+zstyle ':fzf-tab:complete:cat:*' fzf-preview 'bat -n --color=always $realpath 2>/dev/null || cat $realpath'
+zstyle ':fzf-tab:complete:bat:*' fzf-preview 'bat -n --color=always $realpath 2>/dev/null'
+zstyle ':fzf-tab:complete:nvim:*' fzf-preview 'bat -n --color=always $realpath 2>/dev/null || cat $realpath'
+zstyle ':fzf-tab:complete:vim:*' fzf-preview 'bat -n --color=always $realpath 2>/dev/null || cat $realpath'
+zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' fzf-preview 'echo ${(P)word}'
+zstyle ':fzf-tab:complete:systemctl-*:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word 2>/dev/null'
+zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview 'git diff $word | bat -n --color=always -l diff 2>/dev/null'
+zstyle ':fzf-tab:complete:git-log:*' fzf-preview 'git log --oneline --graph --color=always $word 2>/dev/null'
+zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview 'git log --oneline --graph --color=always $word 2>/dev/null'
+zstyle ':fzf-tab:complete:docker-*:*' fzf-preview 'docker inspect $word 2>/dev/null | bat -n --color=always -l json'
+zstyle ':fzf-tab:complete:kubectl-*:*' fzf-preview 'kubectl describe $word 2>/dev/null | head -40'
+zstyle ':fzf-tab:*' fzf-flags --height=80% --layout=reverse --border
+zstyle ':fzf-tab:*' switch-group '<' '>'
+
 # Kill command completion
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"

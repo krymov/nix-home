@@ -56,13 +56,17 @@ in {
           extraConfig = ''
             set -g @resurrect-capture-pane-contents 'on'
             set -g @resurrect-strategy-nvim 'session'
+            set -g @resurrect-dir '$HOME/.local/share/tmux/resurrect'
+            set -g @resurrect-processes 'nvim vim less man tail top htop btop'
           '';
         }
         {
           plugin = continuum;
           extraConfig = ''
-            set -g @continuum-save-interval '10'
+            set -g @continuum-save-interval '5'
             set -g @continuum-restore 'on'
+            set -g @continuum-boot 'on'
+            set -g @continuum-boot-options 'iterm'
           '';
         }
         cpu
@@ -155,8 +159,9 @@ in {
         set -g status-right-length 200
         set -g status-left-length 100
 
-        # Right side: gitmux | directory | kube | battery (graceful) | cpu | time | session
-        set -g  status-right ""
+        # Right side: continuum trigger | gitmux | directory | kube | battery (graceful) | cpu | time | session
+        # NOTE: continuum save trigger must be in status-right or auto-save won't fire
+        set -g  status-right "#(${pkgs.tmuxPlugins.continuum}/share/tmux-plugins/continuum/scripts/continuum_save.sh)"
         set -ag status-right "#(${pkgs.gitmux}/bin/gitmux -cfg $HOME/.gitmux.conf '#{pane_current_path}')"
         set -ag status-right "#{E:@catppuccin_status_directory}"
         # K8s context: only show if kubectl exists and a context is set

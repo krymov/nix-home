@@ -25,7 +25,6 @@ in {
 
     programs.zsh = {
       enable = true;
-      dotDir = config.home.homeDirectory;
       enableCompletion = true;
       autocd = true;
 
@@ -41,11 +40,12 @@ in {
       defaultKeymap = "emacs";
 
       history = {
-        size = 50000;
-        save = 50000;
-        path = "$HOME/.zsh_history";
+        size = 10000000;
+        save = 10000000;
+        path = "${config.home.homeDirectory}/.zsh_history";
         ignoreAllDups = true;
-        share = true;
+        share = false;
+        extended = true;
         expireDuplicatesFirst = true;
       };
 
@@ -110,6 +110,18 @@ in {
           # Tier 3: Manual installs (zsh-comp helper)
           fpath+=("''${XDG_DATA_HOME:-$HOME/.local/share}/zsh/completions")
 
+          # Tier 2: Cached runtime completions (auto-regenerate when binary updates)
+          _cache_dir="''${XDG_CACHE_HOME:-$HOME/.cache}/zsh-completions"
+          mkdir -p "$_cache_dir"
+          for cmd in ${lib.concatStringsSep " " completionCmds}; do
+            _cache="$_cache_dir/_$cmd"
+            _bin="$(command -v $cmd 2>/dev/null)"
+            if [[ -n "$_bin" ]] && [[ ! -f "$_cache" || "$_bin" -nt "$_cache" ]]; then
+              $cmd completion zsh > "$_cache" 2>/dev/null
+            fi
+          done
+          fpath+=("$_cache_dir")
+
           # Legacy custom completions dir
           fpath=(~/.zsh/completions $fpath)
         '')
@@ -129,7 +141,14 @@ in {
           setopt extended_glob nomatch notify
           setopt auto_pushd pushd_ignore_dups pushd_minus
 
-          HISTORY_IGNORE='(ls|ll|la|pwd|exit|clear|history|cd|cd ..|cd -|q|wq|ZZ)'
+          # History — append immediately with timestamps, no cross-session pollution
+          # INC_APPEND_HISTORY_TIME: write each command after it finishes (with duration)
+          # Use 'fc -RI' to manually pull in other sessions' history when needed
+          setopt INC_APPEND_HISTORY_TIME
+          setopt HIST_REDUCE_BLANKS
+          setopt HIST_NO_STORE
+
+          HISTORY_IGNORE='(ls|ll|la|pwd|exit|clear|history|fc *|cd|cd ..|cd -|q|wq|ZZ)'
 
           # PATH management
           typeset -U path
@@ -150,17 +169,11 @@ in {
           export XDG_STATE_HOME="$HOME/.local/state"
           mkdir -p "$XDG_CONFIG_HOME" "$XDG_DATA_HOME" "$XDG_CACHE_HOME" "$XDG_STATE_HOME"
 
-          # Tier 2: Cached runtime completions (auto-regenerate when binary updates)
-          _cache_dir="''${XDG_CACHE_HOME:-$HOME/.cache}/zsh-completions"
-          mkdir -p "$_cache_dir"
-          for cmd in ${lib.concatStringsSep " " completionCmds}; do
-            _cache="$_cache_dir/_$cmd"
-            _bin="$(command -v $cmd 2>/dev/null)"
-            if [[ -n "$_bin" ]] && [[ ! -f "$_cache" || "$_bin" -nt "$_cache" ]]; then
-              $cmd completion zsh > "$_cache" 2>/dev/null
-            fi
-          done
-          fpath+=("$_cache_dir")
+          # fzf-tab — replaces zsh menu-select with fzf (must load after compinit)
+          source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
+
+          # fzf inside tmux — use popup windows
+          export FZF_TMUX_OPTS="-p 80%,60%"
 
           # Load modular config files
           for config_file in "$HOME/.zsh/"{env,aliases,functions,completions}.zsh; do
