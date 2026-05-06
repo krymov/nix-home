@@ -16,6 +16,7 @@ in {
   config = lib.mkIf cfg.enable {
     programs.neovim = {
       enable = true;
+      sideloadInitLua = true;
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;

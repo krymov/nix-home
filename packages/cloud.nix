@@ -47,8 +47,9 @@ with pkgs; [
 
   # Storage
   minio-client      # S3-compatible object storage CLI (mc)
-  seaweedfs         # distributed file system CLI (weed)
-
+] ++ lib.optionals stdenv.isLinux [
+  seaweedfs         # distributed file system CLI (weed) — broken on macOS
+] ++ [
   # Caches / registries
   attic-client      # Nix binary cache client
   devpi-client      # PyPI index client
