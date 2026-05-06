@@ -17,6 +17,8 @@ in {
     programs.neovim = {
       enable = true;
       sideloadInitLua = true;
+      withRuby = false;
+      withPython3 = false;
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;
