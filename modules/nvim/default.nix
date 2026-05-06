@@ -49,14 +49,11 @@ in {
       ];
     };
 
-    # Full config: symlink entire lua/ directory (LSP, plugins, etc.)
-    # Minimal config: only symlink init.lua and options.lua + ui plugin (catppuccin)
+    # sideloadInitLua handles init.lua — only manage lua/ directory here
     home.file = if cfg.minimal then {
-      ".config/nvim/init.lua".source = "${configDir}/init.lua";
       ".config/nvim/lua/options.lua".source = "${configDir}/lua/options.lua";
       ".config/nvim/lua/plugins/ui.lua".source = "${configDir}/lua/plugins/ui.lua";
     } else {
-      ".config/nvim/init.lua".source = "${configDir}/init.lua";
       ".config/nvim/lua" = {
         source = "${configDir}/lua";
         recursive = true;
