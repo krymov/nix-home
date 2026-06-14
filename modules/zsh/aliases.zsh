@@ -91,7 +91,7 @@ case "$PLATFORM" in
     ;;
   "nixos"|"linux")
     alias o='xdg-open'
-    if command -v xclip >/dev/null; then
+    if command -v xclip >/dev/null && [[ ! -f "$HOME/.shellfishrc" ]]; then
       alias pbcopy='xclip -selection clipboard'
       alias pbpaste='xclip -selection clipboard -o'
     fi

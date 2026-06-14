@@ -35,6 +35,7 @@ with pkgs; [
 
   # Secrets
   vault
+  openbao           # HashiCorp Vault fork (open-source)
   kubeseal          # SealedSecrets
   sops              # encrypted secrets in git
   age
