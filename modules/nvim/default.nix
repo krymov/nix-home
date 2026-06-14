@@ -41,12 +41,12 @@ in {
       ];
     };
 
+    programs.neovim.extraLuaConfig = builtins.readFile "${configDir}/init.lua";
+
     home.file = if cfg.minimal then {
-      ".config/nvim/init.lua".source = "${configDir}/init.lua";
       ".config/nvim/lua/options.lua".source = "${configDir}/lua/options.lua";
       ".config/nvim/lua/plugins/ui.lua".source = "${configDir}/lua/plugins/ui.lua";
     } else {
-      ".config/nvim/init.lua".source = "${configDir}/init.lua";
       ".config/nvim/lua" = {
         source = "${configDir}/lua";
         recursive = true;
