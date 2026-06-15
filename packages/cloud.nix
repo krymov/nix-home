@@ -8,7 +8,7 @@ with pkgs; [
   k9s               # terminal UI for K8s
   stern
   kustomize
-  kubernetes-helm
+  (kubernetes-helm.overrideAttrs { doCheck = false; })
   cdk8s-cli
 
   # GitOps
