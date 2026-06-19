@@ -4,10 +4,10 @@ let cfg = config.nix-home.ssh;
 in {
   options.nix-home.ssh = {
     enable = lib.mkEnableOption "SSH configuration";
-    extraMatchBlocks = lib.mkOption {
+    extraSettings = lib.mkOption {
       type = lib.types.attrs;
       default = {};
-      description = "Additional SSH matchBlocks to merge (for private host definitions)";
+      description = "Additional SSH settings to merge (for private host definitions)";
     };
   };
 
@@ -23,24 +23,22 @@ in {
         SendEnv -LC_*
       '';
 
-      matchBlocks = {
+      settings = {
         # Public git forges
-        "github.com" = { hostname = "github.com"; user = "git"; };
-        "gitlab.com" = { hostname = "gitlab.com"; user = "git"; };
+        "github.com" = { HostName = "github.com"; User = "git"; };
+        "gitlab.com" = { HostName = "gitlab.com"; User = "git"; };
 
         # Global defaults
         "*" = {
-          identityFile = "~/.ssh/id_ed25519";
-          extraOptions = {
-            IdentitiesOnly = "yes";
-            AddKeysToAgent = "yes";
-            ServerAliveInterval = "60";
-            ServerAliveCountMax = "3";
-          } // lib.optionalAttrs pkgs.stdenv.isDarwin {
-            UseKeychain = "yes";
-          };
+          IdentityFile = "~/.ssh/id_ed25519";
+          IdentitiesOnly = "yes";
+          AddKeysToAgent = "yes";
+          ServerAliveInterval = 60;
+          ServerAliveCountMax = 3;
+        } // lib.optionalAttrs pkgs.stdenv.isDarwin {
+          UseKeychain = "yes";
         };
-      } // cfg.extraMatchBlocks;
+      } // cfg.extraSettings;
     };
   };
 }
