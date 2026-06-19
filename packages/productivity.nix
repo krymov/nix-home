@@ -20,6 +20,9 @@ with pkgs; [
   typst
   glow               # markdown previewer
 
+  # Email (accounts/config managed in .dotfiles, not here)
+  aerc
+
   # Cooking
   cook-cli
 
