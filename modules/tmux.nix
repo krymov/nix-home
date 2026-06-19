@@ -55,6 +55,11 @@ in {
         layout: [branch, " ", divergence, " - ", flags]
     '';
 
+    # Status-bar chip helpers (cross-platform; hide themselves when N/A).
+    home.file.".config/tmux/mem.sh" = { source = ../scripts/tmux-mem.sh; executable = true; };
+    home.file.".config/tmux/timew.sh" = { source = ../scripts/tmux-timew.sh; executable = true; };
+    home.file.".config/tmux/battery.sh" = { source = ../scripts/tmux-battery.sh; executable = true; };
+
     programs.tmux = {
       enable = true;
       terminal = "tmux-256color";
@@ -186,16 +191,22 @@ in {
         set -g status-right-length 200
         set -g status-left-length 100
 
-        # Right side: continuum trigger | gitmux | directory | kube | battery (graceful) | cpu | time | session
-        # NOTE: continuum save trigger must be in status-right or auto-save won't fire
+        # Right-side chips — SINGLE source of truth. tmux-idle now only *appends*
+        # its invisible idle-color updater instead of overwriting this.
+        # continuum save trigger must be in status-right or auto-save won't fire.
         set -g  status-right "#(${pkgs.tmuxPlugins.continuum}/share/tmux-plugins/continuum/scripts/continuum_save.sh)"
-        set -ag status-right "#(${pkgs.gitmux}/bin/gitmux -cfg $HOME/.gitmux.conf '#{pane_current_path}')"
-        set -ag status-right "#{E:@catppuccin_status_directory}"
-        # NOTE: kube-context now lives in the starship prompt (per-pane, travels over ssh).
-        # Battery: graceful fallback — only renders if battery plugin detects a battery
-        set -agF status-right "#{E:@catppuccin_status_battery}"
+        # Prefix indicator — lit only while the prefix key is active (commas in #[] escaped as #,).
+        set -ag status-right "#{?client_prefix,#[fg=#{@thm_crust}#,bg=#{@thm_red}#,bold] PREFIX #[default] ,}"
+        # Timewarrior — active task + elapsed (auto-tracked per session); hidden when idle.
+        set -ag status-right "#(THM_FG='#{@thm_crust}' THM_BG='#{@thm_peach}' ~/.config/tmux/timew.sh)"
+        # Battery — real detection; hidden on desktops/VMs/containers/servers.
+        set -ag status-right "#(THM_FG='#{@thm_crust}' THM_BG='#{@thm_green}' ~/.config/tmux/battery.sh)"
+        # CPU (catppuccin) + RAM (script).
         set -agF status-right "#{E:@catppuccin_status_cpu}"
+        set -ag  status-right "#[fg=#{@thm_crust},bg=#{@thm_sky},bold]  #(~/.config/tmux/mem.sh) #[default] "
+        # NOTE: kube-context now lives in the starship prompt (per-pane, travels over ssh).
         set -ag  status-right "#{E:@catppuccin_status_date_time}"
+        set -ag  status-right "#{E:@catppuccin_status_host}"
         set -ag  status-right "#{E:@catppuccin_status_session}"
 
         # Lazygit popup
