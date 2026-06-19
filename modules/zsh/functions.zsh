@@ -5,6 +5,31 @@
 _set_title() { print -Pn "\e]2;%n@%m: %~\a"; }
 autoload -Uz add-zsh-hook && add-zsh-hook precmd _set_title
 
+# Timewarrior context tags (local only; the laptop is the single source of truth).
+# chpwd: re-evaluate the active project when you cd to a different repo within a
+# pane (tmux can't see this) — re-tracks only on project change, no churn.
+_timew_focus() {
+  [[ -n "$TMUX" && -z "$SSH_CONNECTION" ]] || return
+  command -v timew >/dev/null 2>&1 || return
+  local s; s=$(tmux display-message -p '#S' 2>/dev/null)
+  ~/.config/tmux/timew-focus.sh "$s" "$PWD" >/dev/null 2>&1
+}
+add-zsh-hook chpwd _timew_focus
+
+# preexec: when you run `ssh <host>`, tag the active interval host:<target>, so a
+# work block records which boxes it touched (captured from the local side).
+_timew_ssh() {
+  [[ -z "$SSH_CONNECTION" ]] || return
+  command -v timew >/dev/null 2>&1 || return
+  [[ "$1" == ssh\ * ]] || return
+  [[ "$(timew get dom.active 2>/dev/null)" == 1 ]] || return
+  local host
+  host=$(printf '%s\n' "$1" | awk '{for(i=2;i<=NF;i++){if($i ~ /^-/){i++; continue} print $i; exit}}')
+  host=${host#*@}
+  [[ -n "$host" ]] && timew tag @1 "host:$host" >/dev/null 2>&1
+}
+add-zsh-hook preexec _timew_ssh
+
 # Create and enter directory
 mkcd() {
   mkdir -p "$1" && cd "$1"

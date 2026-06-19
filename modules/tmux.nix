@@ -58,6 +58,7 @@ in {
     # Status-bar chip helpers (cross-platform; hide themselves when N/A).
     home.file.".config/tmux/mem.sh" = { source = ../scripts/tmux-mem.sh; executable = true; };
     home.file.".config/tmux/timew.sh" = { source = ../scripts/tmux-timew.sh; executable = true; };
+    home.file.".config/tmux/timew-focus.sh" = { source = ../scripts/tmux-timew-focus.sh; executable = true; };
     home.file.".config/tmux/battery.sh" = { source = ../scripts/tmux-battery.sh; executable = true; };
 
     programs.tmux = {
@@ -221,8 +222,10 @@ in {
           fi && \
           tmux switch-client -t \"$name\""
 
-        # Timewarrior integration — auto-track time per tmux session
-        set-hook -g client-session-changed 'run-shell -b "command -v timew >/dev/null && timew start tmux:#{session_name} >/dev/null 2>&1 || true"'
+        # Timewarrior — focus-driven, project-level intervals (re-tracks only when
+        # the active project changes; see timew-focus.sh). zsh chpwd/preexec add
+        # proj/host tags too; Claude Code's SessionStart hook adds ai:claude.
+        set-hook -g client-session-changed 'run-shell -b "~/.config/tmux/timew-focus.sh \"#{session_name}\" \"#{pane_current_path}\""'
         set-hook -g client-detached 'run-shell -b "command -v timew >/dev/null && timew stop >/dev/null 2>&1 || true"'
       '';
     };
