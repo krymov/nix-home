@@ -12,7 +12,9 @@ in {
       enableZshIntegration = true;
       settings = {
         add_newline = false;
-        format = "$hostname$directory$git_branch$git_status$kubernetes$custom$cmd_duration$character";
+        # Left = where you type: host, dir, git, danger. Kube + duration go right.
+        format = "$hostname$directory$git_branch$git_status$custom$character";
+        right_format = "$cmd_duration$kubernetes";
 
         # Host: only when remote, so multiplexed panes reveal which box they sit on.
         hostname = {
@@ -55,8 +57,11 @@ in {
           symbol = "⎈ ";
           style = "cyan";
           contexts = [
+            # prod/staging match first and stay full + colored for visibility.
             { context_pattern = ".*(prod|prd).*"; style = "bold red"; symbol = "⎈ "; }
             { context_pattern = ".*(stag|stg).*"; style = "bold yellow"; symbol = "⎈ "; }
+            # Everything else: shorten GKE gke_PROJECT_REGION_CLUSTER → PROJECT/CLUSTER.
+            { context_pattern = "gke_(?P<proj>[^_]+)_[^_]+_(?P<cluster>.+)"; context_alias = "$proj/$cluster"; }
           ];
         };
 
