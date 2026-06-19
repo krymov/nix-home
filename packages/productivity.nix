@@ -22,6 +22,7 @@ with pkgs; [
 
   # Email (accounts/config managed in .dotfiles, not here)
   aerc
+  himalaya           # pimalaya email CLI
 
   # Cooking
   cook-cli
