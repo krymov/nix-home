@@ -1,5 +1,7 @@
 {
   imports = [
+    ./modules/environment.nix
+    ./modules/clipboard-image.nix
     ./modules/git.nix
     ./modules/zsh
     ./modules/tmux.nix

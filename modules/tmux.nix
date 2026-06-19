@@ -1,6 +1,23 @@
 { config, lib, pkgs, ... }:
 
-let cfg = config.nix-home.tmux;
+let
+  cfg = config.nix-home.tmux;
+  env = config.nix-home.environment;
+
+  # Coarse, deploy-level env chip for status-left. Per-pane truth lives in the
+  # prompt (a pane SSH'd to prod from a dev box is flagged there, not here).
+  envChip = {
+    prod = "#[fg=#{@thm_crust},bg=#{@thm_red},bold] PROD #[default] ";
+    staging = "#[fg=#{@thm_crust},bg=#{@thm_yellow},bold] STG #[default] ";
+    dev = "";
+  }.${env};
+
+  # Active-pane border tint by blast-radius.
+  activeBorderColor = {
+    prod = "#{@thm_red}";
+    staging = "#{@thm_yellow}";
+    dev = "#{@thm_green}";
+  }.${env};
 in {
   options.nix-home.tmux = {
     enable = lib.mkEnableOption "tmux configuration";
@@ -108,6 +125,13 @@ in {
         setw -g allow-rename off
         set -g exit-unattached off
 
+        # Pane borders — per-pane host reinforcement for the multiplex case.
+        # #T (pane_title) carries user@host:dir, set by the shell precmd, so the
+        # border reflects the REMOTE host after an ssh. Active border tints by env.
+        set -g pane-border-status top
+        set -g pane-border-format " #P #{pane_current_command} #[fg=#{@thm_overlay0}]#T "
+        set -g pane-active-border-style "fg=${activeBorderColor}"
+
         # Split panes (inherit cwd)
         bind | split-window -h -c "#{pane_current_path}"
         bind - split-window -v -c "#{pane_current_path}"
@@ -155,7 +179,10 @@ in {
 
         # Status bar
         set -g status-position top
-        set -g status-left ""
+        # status-left = project/session identity (the durable navigational unit),
+        # plus a coarse deploy-level env chip. Not overridden by tmux-idle.
+        set -g @host_env "${env}"
+        set -g status-left "${envChip}#[fg=#{@thm_crust},bg=#{@thm_mauve},bold] #S #[default] "
         set -g status-right-length 200
         set -g status-left-length 100
 
@@ -164,8 +191,7 @@ in {
         set -g  status-right "#(${pkgs.tmuxPlugins.continuum}/share/tmux-plugins/continuum/scripts/continuum_save.sh)"
         set -ag status-right "#(${pkgs.gitmux}/bin/gitmux -cfg $HOME/.gitmux.conf '#{pane_current_path}')"
         set -ag status-right "#{E:@catppuccin_status_directory}"
-        # K8s context: only show if kubectl exists and a context is set
-        set -ag status-right "#(ctx=$(kubectl config current-context 2>/dev/null) && printf ' ⎈ %s' \"$ctx\" || true)"
+        # NOTE: kube-context now lives in the starship prompt (per-pane, travels over ssh).
         # Battery: graceful fallback — only renders if battery plugin detects a battery
         set -agF status-right "#{E:@catppuccin_status_battery}"
         set -agF status-right "#{E:@catppuccin_status_cpu}"

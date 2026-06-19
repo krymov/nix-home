@@ -1,5 +1,10 @@
 # Shell functions
 
+# Terminal/pane title — user@host:dir. Lets tmux's pane-border #T reflect the
+# REMOTE host after an ssh, so each pane shows which box it's actually on.
+_set_title() { print -Pn "\e]2;%n@%m: %~\a"; }
+autoload -Uz add-zsh-hook && add-zsh-hook precmd _set_title
+
 # Create and enter directory
 mkcd() {
   mkdir -p "$1" && cd "$1"

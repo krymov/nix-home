@@ -15,7 +15,7 @@
       forAllSystems = nixpkgs.lib.genAttrs [
         "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin"
       ];
-      mkHome = { system, profile, username ? "mark", homeDirectory ? "/home/${username}" }:
+      mkHome = { system, profile, environment ? "dev", username ? "mark", homeDirectory ? "/home/${username}" }:
         home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             inherit system;
@@ -27,6 +27,7 @@
             ./default.nix
             {
               nix-home.profiles.${profile}.enable = true;
+              nix-home.environment = environment;
               home = {
                 inherit username homeDirectory;
                 stateVersion = "25.11";
