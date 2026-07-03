@@ -17,9 +17,12 @@ in {
       enableZshIntegration = true;
       settings = {
         add_newline = false;
+        # Give custom commands headroom so a cold nix-store first render doesn't
+        # spuriously time out (the commands themselves are ~10ms warm).
+        command_timeout = 2000;
         # Two-line: dense context up top (length doesn't matter — you don't type
         # there), then the cursor alone on the line below.
-        format = "$hostname$directory$git_branch$git_status\${custom.aws}\${custom.aws_prod}\${custom.gcloud}\${custom.gcloud_prod}$azure$terraform\${custom.vault}\${custom.vault_prod}$kubernetes$cmd_duration\${custom.env_prod}\${custom.env_staging}$line_break$character";
+        format = "$hostname$directory$git_branch$git_status\${custom.aws}\${custom.gcloud}$terraform\${custom.vault}$kubernetes$cmd_duration\${custom.env_prod}\${custom.env_staging}$line_break$character";
 
         # Host: only when remote, so multiplexed panes reveal which box they sit on.
         hostname = {
@@ -86,44 +89,23 @@ in {
           shell = [ "sh" ];
         };
 
-        # Cloud/secrets identity via custom modules: gated (hidden until an identity
-        # is actually assumed — native aws leaks a lone icon when only AWS_REGION is
-        # set) and prod-aware (native modules can't color-by-value). Each provider
-        # has a normal + prod variant with mutually-exclusive `when`; helper scripts
-        # in ~/.config/starship print the identity.
+        # Cloud/secrets identity — one gated module each (hidden until an identity
+        # is actually assumed; native aws leaks a lone icon when only AWS_REGION is
+        # set). Neutral-colored: k8s reddens prod contexts and HOST_ENV shows PROD,
+        # so per-provider red was redundant bloat. "prod" still shows in the value.
         custom.aws = {
-          when = ''v=$($HOME/.config/starship/aws.sh); [ -n "$v" ] && ! printf "%s" "$v" | grep -qiE "prod|prd"'';
+          when = ''[ -n "$($HOME/.config/starship/aws.sh)" ]'';
           command = "$HOME/.config/starship/aws.sh";
           format = "[ $output]($style) ";
           style = "bold yellow";
           shell = [ "sh" ];
         };
-        custom.aws_prod = {
-          when = ''$HOME/.config/starship/aws.sh | grep -qiE "prod|prd"'';
-          command = "$HOME/.config/starship/aws.sh";
-          format = "[ $output ⚠]($style) ";
-          style = "bold red";
-          shell = [ "sh" ];
-        };
         custom.gcloud = {
-          when = ''v=$($HOME/.config/starship/gcloud.sh); [ -n "$v" ] && ! printf "%s" "$v" | grep -qiE "prod|prd"'';
+          when = ''[ -n "$($HOME/.config/starship/gcloud.sh)" ]'';
           command = "$HOME/.config/starship/gcloud.sh";
           format = "[ $output]($style) ";
           style = "bold blue";
           shell = [ "sh" ];
-        };
-        custom.gcloud_prod = {
-          when = ''$HOME/.config/starship/gcloud.sh | grep -qiE "prod|prd"'';
-          command = "$HOME/.config/starship/gcloud.sh";
-          format = "[ $output ⚠]($style) ";
-          style = "bold red";
-          shell = [ "sh" ];
-        };
-        azure = {
-          disabled = false;
-          format = "[$symbol$subscription]($style) ";
-          symbol = "󰠅 ";
-          style = "bold cyan";
         };
 
         # Terraform — which workspace an apply would hit (blast radius). Workspace
@@ -136,19 +118,12 @@ in {
         };
 
         # Vault / OpenBao — which secrets store you're pointed at (VAULT_ADDR /
-        # BAO_ADDR, host only). Prod addr → red ⚠.
+        # BAO_ADDR, host only). Hidden when unset.
         custom.vault = {
-          when = ''v=$($HOME/.config/starship/vault.sh); [ -n "$v" ] && ! printf "%s" "$v" | grep -qiE "prod|prd"'';
+          when = ''[ -n "$($HOME/.config/starship/vault.sh)" ]'';
           command = "$HOME/.config/starship/vault.sh";
           format = "[󰌾 $output]($style) ";
           style = "bold #f38ba8";
-          shell = [ "sh" ];
-        };
-        custom.vault_prod = {
-          when = ''$HOME/.config/starship/vault.sh | grep -qiE "prod|prd"'';
-          command = "$HOME/.config/starship/vault.sh";
-          format = "[󰌾 $output ⚠]($style) ";
-          style = "bold red";
           shell = [ "sh" ];
         };
 
