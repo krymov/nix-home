@@ -26,6 +26,7 @@ with pkgs; [
   awscli2
   google-cloud-sdk
   terraform
+  opentofu          # Terraform fork (open-source)
   doctl
 
   # Networking / tunnels
