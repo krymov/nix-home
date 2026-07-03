@@ -12,9 +12,9 @@ in {
       enableZshIntegration = true;
       settings = {
         add_newline = false;
-        # Left = where you type: host, dir, git, danger. Kube + duration go right.
-        format = "$hostname$directory$git_branch$git_status$custom$character";
-        right_format = "$cmd_duration$kubernetes";
+        # Two-line: dense context up top (length doesn't matter — you don't type
+        # there), then the cursor alone on the line below.
+        format = "$hostname$directory$git_branch$git_status$aws$gcloud$azure$terraform$env_var$kubernetes$cmd_duration$custom$line_break$character";
 
         # Host: only when remote, so multiplexed panes reveal which box they sit on.
         hostname = {
@@ -49,11 +49,12 @@ in {
           error_symbol = "[>](bold red)";
         };
 
-        # Kube-context per pane. Native module — reads kubeconfig, no kubectl subprocess.
+        # Kube — the blast-radius signal. Shows context AND namespace (what a
+        # kubectl actually hits). Native module — reads kubeconfig, no subprocess.
         # Prod contexts go red, staging yellow; edit context_pattern to taste.
         kubernetes = {
           disabled = false;
-          format = "[$symbol$context]($style) ";
+          format = "[$symbol$context(:$namespace)]($style) ";
           symbol = "⎈ ";
           style = "cyan";
           contexts = [
@@ -80,8 +81,51 @@ in {
           shell = [ "sh" ];
         };
 
-        aws.disabled = true;
-        gcloud.disabled = true;
+        # Cloud provider context — compact (key identifier only), native (env +
+        # config files, no network). No per-value prod coloring natively; k8s +
+        # HOST_ENV carry the danger signal.
+        aws = {
+          disabled = false;
+          format = "[$symbol$profile(@$region)]($style) ";
+          symbol = " ";
+          style = "bold yellow";
+        };
+        gcloud = {
+          disabled = false;
+          format = "[$symbol$project]($style) ";
+          symbol = " ";
+          style = "bold blue";
+        };
+        azure = {
+          disabled = false;
+          format = "[$symbol$subscription]($style) ";
+          symbol = "󰠅 ";
+          style = "bold cyan";
+        };
+
+        # Terraform — which workspace an apply would hit (blast radius). Workspace
+        # only, so no slow `terraform version` shell-out. Shows in .tf dirs.
+        terraform = {
+          disabled = false;
+          format = "[$symbol$workspace]($style) ";
+          symbol = "󱁢 ";
+          style = "bold #cba6f7";
+        };
+
+        # Vault / OpenBao — which secrets store you're pointed at. No native module;
+        # read the address env vars (cheap, no subprocess). Hidden when unset.
+        env_var.VAULT_ADDR = {
+          variable = "VAULT_ADDR";
+          format = "[󰌾 $env_value]($style) ";
+          style = "bold #f38ba8";
+        };
+        env_var.BAO_ADDR = {
+          variable = "BAO_ADDR";
+          format = "[󰌾 $env_value]($style) ";
+          style = "bold #f38ba8";
+        };
+
+        # Language/toolchain modules stay off — nix + direnv own the environment.
         docker_context.disabled = true;
         nodejs.disabled = true;
         python.disabled = true;
