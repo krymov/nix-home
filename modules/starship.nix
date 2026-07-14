@@ -94,14 +94,18 @@ in {
         # set). Neutral-colored: k8s reddens prod contexts and HOST_ENV shows PROD,
         # so per-provider red was redundant bloat. "prod" still shows in the value.
         custom.aws = {
-          when = ''[ -n "$($HOME/.config/starship/aws.sh)" ]'';
+          # Gate on the env vars directly — forking the script inside `when`
+          # doubled the subprocess count and spuriously timed out under load.
+          when = ''[ -n "''${AWS_VAULT:-''${AWS_PROFILE:-}}" ]'';
           command = "$HOME/.config/starship/aws.sh";
           format = "[ $output]($style) ";
           style = "bold yellow";
           shell = [ "sh" ];
         };
         custom.gcloud = {
-          when = ''[ -n "$($HOME/.config/starship/gcloud.sh)" ]'';
+          # Cheap gate: env var or an active_config file. May render an empty
+          # icon if a config exists without a project set — acceptable trade.
+          when = ''[ -n "''${CLOUDSDK_CORE_PROJECT:-}" ] || [ -f "''${CLOUDSDK_CONFIG:-$HOME/.config/gcloud}/active_config" ]'';
           command = "$HOME/.config/starship/gcloud.sh";
           format = "[ $output]($style) ";
           style = "bold blue";
@@ -120,7 +124,7 @@ in {
         # Vault / OpenBao — which secrets store you're pointed at (VAULT_ADDR /
         # BAO_ADDR, host only). Hidden when unset.
         custom.vault = {
-          when = ''[ -n "$($HOME/.config/starship/vault.sh)" ]'';
+          when = ''[ -n "''${BAO_ADDR:-''${VAULT_ADDR:-}}" ]'';
           command = "$HOME/.config/starship/vault.sh";
           format = "[󰌾 $output]($style) ";
           style = "bold #f38ba8";
