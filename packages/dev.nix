@@ -51,6 +51,7 @@ with pkgs; [
   poetry
 
   # Dev utilities
+  herdr             # agent multiplexer (requires overlays/herdr.nix)
   hurl
   grex              # generate regex from examples
   gitleaks          # git secrets scanner

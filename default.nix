@@ -6,6 +6,7 @@
     ./modules/zsh
     ./modules/tmux.nix
     ./modules/tmux-idle.nix
+    ./modules/herdr.nix
     ./modules/nvim
     ./modules/ssh.nix
     ./modules/starship.nix

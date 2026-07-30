@@ -18,6 +18,7 @@ in {
     nix-home.zsh = lib.mkDefault { enable = true; };
     nix-home.tmux = lib.mkDefault { enable = true; };
     nix-home.tmux-idle = lib.mkDefault { enable = true; };
+    nix-home.herdr = lib.mkDefault { enable = true; };
     nix-home.nvim = lib.mkDefault { enable = true; };
     nix-home.ssh = lib.mkDefault { enable = true; };
     nix-home.starship = lib.mkDefault { enable = true; };

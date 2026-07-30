@@ -8,6 +8,9 @@
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Agent multiplexer — not packaged in nixpkgs. Left on its own nixpkgs pin
+    # (it needs a rust-overlay toolchain); no `follows` to avoid build breakage.
+    herdr.url = "github:ogulcancelik/herdr";
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... } @inputs:
@@ -21,7 +24,7 @@
             inherit system;
             config.allowUnfree = true;
             config.problems.handlers.pg_top.unsupported = "warn";
-            overlays = [ self.overlays.unstable self.overlays.omnictl-pinned ];
+            overlays = [ self.overlays.unstable self.overlays.omnictl-pinned self.overlays.herdr ];
           };
           modules = [
             ./default.nix
@@ -54,12 +57,13 @@
             inherit system;
             config.allowUnfree = true;
             config.problems.handlers.pg_top.unsupported = "warn";
-            overlays = [ self.overlays.omnictl-pinned ];
+            overlays = [ self.overlays.omnictl-pinned self.overlays.herdr ];
           };
         }
       );
 
       overlays.unstable = import ./overlays/unstable.nix { inherit inputs; };
       overlays.omnictl-pinned = import ./overlays/omnictl-pinned.nix;
+      overlays.herdr = import ./overlays/herdr.nix { inherit inputs; };
     };
 }

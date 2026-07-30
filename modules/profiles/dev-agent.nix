@@ -19,6 +19,7 @@ in {
     nix-home.zsh = lib.mkDefault { enable = true; };
     nix-home.tmux = lib.mkDefault { enable = true; catppuccinFlavor = "macchiato"; };
     nix-home.tmux-idle = lib.mkDefault { enable = true; };
+    nix-home.herdr = lib.mkDefault { enable = true; };
     nix-home.nvim = lib.mkDefault { enable = true; };  # full LSP
     nix-home.ssh = lib.mkDefault { enable = true; };
     nix-home.starship = lib.mkDefault { enable = true; };

@@ -4,6 +4,7 @@
   "argocd"
   "cilium"
   "helm"
+  "herdr"
   "hubble"
   "k9s"
   "kubectl"
