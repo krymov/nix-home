@@ -21,8 +21,11 @@ with pkgs; [
 
   # SQL-on-files
   duckdb            # query CSV/Parquet with SQL
+  harlequin         # terminal SQL IDE (DuckDB + Postgres adapters)
+  sqlfluff          # SQL linter/formatter (dialect-aware)
   sqlite            # SQLite CLI
   sqlite-utils      # load/query CSVs into SQLite
+  litecli           # SQLite CLI with autocompletion
   datasette         # explore SQLite databases
 
   # Database clients
@@ -41,6 +44,9 @@ with pkgs; [
   parallel          # GNU parallel
   pv                # show pipe throughput
   jc                # turn command output into JSON
+
+  # ML / datasets
+  python3Packages.huggingface-hub  # `hf` CLI — models/datasets download & upload
 
   # Spreadsheet & plots
   sc-im             # vim-like terminal spreadsheet

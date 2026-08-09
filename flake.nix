@@ -24,7 +24,7 @@
             inherit system;
             config.allowUnfree = true;
             config.problems.handlers.pg_top.unsupported = "warn";
-            overlays = [ self.overlays.unstable self.overlays.omnictl-pinned self.overlays.herdr ];
+            overlays = [ self.overlays.unstable self.overlays.omnictl-pinned self.overlays.herdr self.overlays.secretspec ];
           };
           modules = [
             ./default.nix
@@ -57,7 +57,7 @@
             inherit system;
             config.allowUnfree = true;
             config.problems.handlers.pg_top.unsupported = "warn";
-            overlays = [ self.overlays.omnictl-pinned self.overlays.herdr ];
+            overlays = [ self.overlays.omnictl-pinned self.overlays.herdr self.overlays.secretspec ];
           };
         }
       );
@@ -65,5 +65,6 @@
       overlays.unstable = import ./overlays/unstable.nix { inherit inputs; };
       overlays.omnictl-pinned = import ./overlays/omnictl-pinned.nix;
       overlays.herdr = import ./overlays/herdr.nix { inherit inputs; };
+      overlays.secretspec = import ./overlays/secretspec.nix;
     };
 }

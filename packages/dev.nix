@@ -56,6 +56,9 @@ with pkgs; [
   grex              # generate regex from examples
   gitleaks          # git secrets scanner
   infisical         # secrets management
+  process-compose   # docker-compose-style local orchestration, no Docker
+  watchexec         # run a command on file change
+  difftastic        # syntax-aware structural diffs
 
   hyperfine         # benchmark CLI commands
 

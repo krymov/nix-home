@@ -39,7 +39,7 @@ with pkgs; [
   openbao           # HashiCorp Vault fork (open-source)
   kubeseal          # SealedSecrets
   sops              # encrypted secrets in git
-  unstable.secretspec  # declarative secrets spec (Cachix); unstable for newer version
+  secretspec         # declarative secrets (Cachix); pinned to v0.17.0 via overlays/secretspec.nix
   age
   gnupg
 
