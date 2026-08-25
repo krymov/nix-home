@@ -41,7 +41,7 @@ in {
       ];
     };
 
-    programs.neovim.initLua = builtins.readFile "${configDir}/init.lua";
+    programs.neovim.extraLuaConfig = builtins.readFile "${configDir}/init.lua";
 
     home.file = if cfg.minimal then {
       ".config/nvim/lua/options.lua".source = "${configDir}/lua/options.lua";
