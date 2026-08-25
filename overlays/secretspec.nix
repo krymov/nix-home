@@ -4,7 +4,7 @@
 # Bump: version + src hash (nix build reports it) + cargoDeps vendor hash
 # (set to lib.fakeHash, build once, copy the reported hash).
 final: prev: {
-  secretspec = prev.secretspec.overrideAttrs (old: rec {
+  secretspec = (prev.secretspec.override { rustPlatform = final.unstable.rustPlatform; }).overrideAttrs (old: rec {
     version = "0.17.0";
     src = final.fetchCrate {
       pname = "secretspec";
