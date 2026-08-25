@@ -7,7 +7,7 @@ in {
     extraMatchBlocks = lib.mkOption {
       type = lib.types.attrs;
       default = {};
-      description = "Additional SSH settings to merge (for private host definitions)";
+      description = "Additional SSH matchBlocks to merge (for private host definitions)";
     };
   };
 
@@ -25,18 +25,20 @@ in {
 
       matchBlocks = {
         # Public git forges
-        "github.com" = { HostName = "github.com"; User = "git"; };
-        "gitlab.com" = { HostName = "gitlab.com"; User = "git"; };
+        "github.com" = { hostname = "github.com"; user = "git"; };
+        "gitlab.com" = { hostname = "gitlab.com"; user = "git"; };
 
         # Global defaults
         "*" = {
-          IdentityFile = "~/.ssh/id_ed25519";
-          IdentitiesOnly = "yes";
-          AddKeysToAgent = "yes";
-          ServerAliveInterval = 60;
-          ServerAliveCountMax = 3;
-        } // lib.optionalAttrs pkgs.stdenv.isDarwin {
-          UseKeychain = "yes";
+          identityFile = "~/.ssh/id_ed25519";
+          extraOptions = {
+            IdentitiesOnly = "yes";
+            AddKeysToAgent = "yes";
+            ServerAliveInterval = "60";
+            ServerAliveCountMax = "3";
+          } // lib.optionalAttrs pkgs.stdenv.isDarwin {
+            UseKeychain = "yes";
+          };
         };
       } // cfg.extraMatchBlocks;
     };
