@@ -3,8 +3,15 @@
 # Instead we rebuild the nixpkgs Rust derivation at a specific crates.io release.
 # Bump: version + src hash (nix build reports it) + cargoDeps vendor hash
 # (set to lib.fakeHash, build once, copy the reported hash).
-final: prev: {
-  secretspec = (prev.secretspec.override { rustPlatform = final.unstable.rustPlatform; }).overrideAttrs (old: rec {
+{ inputs }:
+final: prev:
+let
+  unstable = import inputs.nixpkgs-unstable {
+    system = final.stdenv.hostPlatform.system;
+  };
+in
+{
+  secretspec = (prev.secretspec.override { rustPlatform = unstable.rustPlatform; }).overrideAttrs (old: rec {
     version = "0.17.0";
     src = final.fetchCrate {
       pname = "secretspec";

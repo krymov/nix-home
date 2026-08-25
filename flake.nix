@@ -65,6 +65,6 @@
       overlays.unstable = import ./overlays/unstable.nix { inherit inputs; };
       overlays.omnictl-pinned = import ./overlays/omnictl-pinned.nix;
       overlays.herdr = import ./overlays/herdr.nix { inherit inputs; };
-      overlays.secretspec = import ./overlays/secretspec.nix;
+      overlays.secretspec = import ./overlays/secretspec.nix { inherit inputs; };
     };
 }
