@@ -4,7 +4,7 @@ let cfg = config.nix-home.ssh;
 in {
   options.nix-home.ssh = {
     enable = lib.mkEnableOption "SSH configuration";
-    extraSettings = lib.mkOption {
+    extraMatchBlocks = lib.mkOption {
       type = lib.types.attrs;
       default = {};
       description = "Additional SSH settings to merge (for private host definitions)";
@@ -23,7 +23,7 @@ in {
         SendEnv -LC_*
       '';
 
-      settings = {
+      matchBlocks = {
         # Public git forges
         "github.com" = { HostName = "github.com"; User = "git"; };
         "gitlab.com" = { HostName = "gitlab.com"; User = "git"; };
@@ -38,7 +38,7 @@ in {
         } // lib.optionalAttrs pkgs.stdenv.isDarwin {
           UseKeychain = "yes";
         };
-      } // cfg.extraSettings;
+      } // cfg.extraMatchBlocks;
     };
   };
 }
